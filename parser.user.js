@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Universal Scraper with Dynamic Settings (Manual Start)
 // @namespace    http://tampermonkey.net/
-// @version      0.1.8
+// @version      0.1.9
 // @description  Universal scraper with dynamic settings, field management, and manual start
 // @author       Leerov
 // @match        *://*/*
@@ -32,9 +32,9 @@
       const data = [];
   
       document
-        .querySelectorAll(
-          savedConfig.fields.length > 0 ? savedConfig.fields[0].selector : ""
-        )
+      .querySelectorAll(
+        savedConfig.fields.length > 0 && savedConfig.fields[0].selector ? savedConfig.fields[0].selector : ""
+      )
         .forEach((element) => {
           const item = {};
           savedConfig.fields.forEach((field) => {
@@ -50,7 +50,6 @@
           if (Object.keys(item).length) data.push(item);
         });
   
-      // Проверка данных перед отправкой
       if (data.length === 0) {
         console.error("Нет данных для отправки.");
         return;
@@ -59,7 +58,7 @@
       GM_xmlhttpRequest({
         method: "POST",
         url: savedConfig.apiUrl,
-        data: JSON.stringify({ domain, data }), // Данные сериализуются в JSON
+        data: JSON.stringify({ domain, data }),
         headers: { "Content-Type": "application/json" },
         onload: function (response) {
           try {
