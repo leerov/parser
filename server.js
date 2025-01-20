@@ -12,12 +12,13 @@ app.use(express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 5000
 app.use(cookieParser());
 
 app.post("/api/list", (req, res) => {
-    const { domain, list } = req.body;
+    const { domain, data } = req.body;
 
-    if (!domain || !list) {
+    // Проверяем наличие необходимых данных
+    if (!domain || !Array.isArray(data)) {
         return res.status(400).json({
             success: false,
-            message: "Домен и список обязательны",
+            message: "Поле 'domain' и массив 'data' обязательны",
         });
     }
 
@@ -26,23 +27,30 @@ app.post("/api/list", (req, res) => {
     // Читаем существующий файл, если он есть
     let existingData = [];
     if (fs.existsSync(filePath)) {
-        const fileContent = fs.readFileSync(filePath);
+        const fileContent = fs.readFileSync(filePath, "utf-8");
         existingData = JSON.parse(fileContent);
     }
 
-    // Фильтруем новые элементы
-    const newItems = list.filter(item => !existingData.includes(item));
+    // Логика для фильтрации новых элементов
+    const newItems = data.filter(newItem => {
+        // Сравниваем объекты через JSON-строки
+        return !existingData.some(existingItem => JSON.stringify(existingItem) === JSON.stringify(newItem));
+    });
 
-    // Записываем только новые элементы в файл
+    // Добавляем только уникальные элементы
     if (newItems.length > 0) {
         const updatedData = [...existingData, ...newItems];
-        fs.writeFileSync(filePath, JSON.stringify(updatedData, null, 2));
+        fs.writeFileSync(filePath, JSON.stringify(updatedData, null, 2), "utf-8");
+        console.log(`Добавлено ${newItems.length} новых элементов.`);
+    } else {
+        console.log("Нет новых элементов для добавления.");
     }
 
+    // Возвращаем ответ клиенту
     res.status(200).json({
         success: true,
-        message: "Успешно отправлено",
-        data: newItems,
+        message: "Данные успешно обработаны",
+        addedItems: newItems,
     });
 });
 
