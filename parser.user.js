@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Universal Scraper with Dynamic Settings (Manual Start)
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @version      0.1.5
 // @description  Universal scraper with dynamic settings, field management, and manual start
 // @author       Leerov
 // @match        *://*/*  
@@ -71,25 +71,10 @@
         const settingsHTML = `
             <div id="scraper-settings">
                 <h2>Настройки</h2>
-                <label>Селектор кнопки следующей страницы: <input type="text" id="nextPageSelector" value="${savedNextPageSelector}"></label><br>
-                <label>API URL: <input type="text" id="apiUrl" value="${apiUrl}"></label><br>
-                <h3>Поля для сбора:</h3>
-                <div id="fields-list">
-                    ${savedFields.map((field, index) => `
-                        <div class="field-row" data-index="${index}">
-                            <input type="text" class="field-name" value="${field.name}" placeholder="Название поля">
-                            <input type="text" class="field-selector" value="${field.selector}" placeholder="CSS-селектор">
-                            <input type="text" class="field-attribute" value="${field.attribute || ''}" placeholder="Атрибут (опционально)">
-                            <button class="remove-field">Удалить</button>
-                        </div>
-                    `).join("")}
-                </div>
-                <button id="add-field">Добавить поле</button>
+                <h3>JSON-конфигурация</h3>
+                <textarea id="json-config" style="width: 100%; height: 300px; font-family: monospace; white-space: pre-wrap; padding: 10px;"></textarea><br>
                 <button id="save-settings">Сохранить</button>
-                <button id="export-settings">Экспортировать</button>
-                <button id="import-settings">Импортировать</button>
                 <button id="close-settings">Закрыть</button>
-                <textarea id="settings-import-export" placeholder="Экспортированные настройки"></textarea>
             </div>
         `;
         
@@ -109,72 +94,54 @@
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
                 width: 400px;
             }
-            #scraper-settings input, #scraper-settings button, #settings-import-export {
+            #scraper-settings input, #scraper-settings button, #json-config {
                 width: 100%;
                 margin-bottom: 10px;
             }
-            .field-row { display: flex; align-items: center; }
-            .field-row input { flex: 1; margin-right: 5px; }
-            .remove-field { background: red; color: white; border: none; }
+            #json-config {
+                font-size: 14px;
+                line-height: 1.5;
+                border: 1px solid #ccc;
+                padding: 8px;
+            }
+            #scraper-settings button {
+                padding: 10px;
+                margin-top: 10px;
+                background-color: #28a745;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+            #scraper-settings button:hover {
+                background-color: #218838;
+            }
         `);
 
-        document.getElementById("add-field").addEventListener("click", () => {
-            const fieldsList = document.getElementById("fields-list");
-            const fieldRowHTML = `
-                <div class="field-row">
-                    <input type="text" class="field-name" placeholder="Название поля">
-                    <input type="text" class="field-selector" placeholder="CSS-селектор">
-                    <input type="text" class="field-attribute" placeholder="Атрибут (опционально)">
-                    <button class="remove-field">Удалить</button>
-                </div>
-            `;
-            fieldsList.insertAdjacentHTML("beforeend", fieldRowHTML);
-            attachRemoveFieldListeners();
-        });
+        const config = {
+            nextPageSelector: savedNextPageSelector,
+            apiUrl: apiUrl,
+            fields: savedFields
+        };
+
+        document.getElementById("json-config").value = JSON.stringify(config, null, 4);
 
         document.getElementById("save-settings").addEventListener("click", () => {
-            const nextPageSelector = document.getElementById("nextPageSelector").value;
-            const apiUrl = document.getElementById("apiUrl").value;
-            const fields = Array.from(document.querySelectorAll("#fields-list .field-row")).map(row => ({
-                name: row.querySelector(".field-name").value,
-                selector: row.querySelector(".field-selector").value,
-                attribute: row.querySelector(".field-attribute").value || null
-            }));
+            try {
+                const newConfig = JSON.parse(document.getElementById("json-config").value);
 
-            GM_setValue(nextPageSelectorKey, nextPageSelector);
-            GM_setValue("apiUrl", apiUrl);
-            GM_setValue("scraperFields", fields);
+                GM_setValue(nextPageSelectorKey, newConfig.nextPageSelector);
+                GM_setValue("apiUrl", newConfig.apiUrl);
+                GM_setValue("scraperFields", newConfig.fields);
 
-            alert("Настройки сохранены!");
-        });
-
-        document.getElementById("export-settings").addEventListener("click", () => {
-            const exportData = JSON.stringify({
-                nextPageSelector: GM_getValue(nextPageSelectorKey),
-                apiUrl: GM_getValue("apiUrl"),
-                fields: GM_getValue("scraperFields")
-            });
-            document.getElementById("settings-import-export").value = exportData;
-        });
-
-        document.getElementById("import-settings").addEventListener("click", () => {
-            const importData = JSON.parse(document.getElementById("settings-import-export").value);
-            GM_setValue(nextPageSelectorKey, importData.nextPageSelector);
-            GM_setValue("apiUrl", importData.apiUrl);
-            GM_setValue("scraperFields", importData.fields);
-            alert("Настройки импортированы! Перезагрузите страницу.");
+                alert("Настройки сохранены!");
+            } catch (e) {
+                alert("Ошибка в формате JSON: " + e.message);
+            }
         });
 
         document.getElementById("close-settings").addEventListener("click", () => {
             settingsDiv.remove();
         });
-
-        function attachRemoveFieldListeners() {
-            document.querySelectorAll(".remove-field").forEach(button => {
-                button.addEventListener("click", (e) => e.target.closest(".field-row").remove());
-            });
-        }
-        attachRemoveFieldListeners();
     }
 
     function showParseButton() {
