@@ -24,10 +24,13 @@ function runJob() {
         });
     });
 
+    // Получаем домен сайта
+    var domain = window.location.hostname;
+
     GM_xmlhttpRequest({
         method: "POST",
         url: "http://localhost:3000/api/list",
-        data: JSON.stringify({ list: data }),
+        data: JSON.stringify({ domain: domain, list: data }),
         headers: {
             "Content-Type": "application/json",
         },
