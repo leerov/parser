@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Universal Scraper with Dynamic Settings (Manual Start)
 // @namespace    http://tampermonkey.net/
-// @version      0.1.5
+// @version      0.1.6
 // @description  Universal scraper with dynamic settings, field management, and manual start
 // @author       Leerov
 // @match        *://*/*  
@@ -18,18 +18,22 @@
 (function() {
     'use strict';
 
-    const nextPageSelectorKey = "nextPageSelector";
-    const defaultNextPageSelector = ".pager .next a";
-    const savedNextPageSelector = GM_getValue(nextPageSelectorKey, defaultNextPageSelector);
-    const savedFields = GM_getValue("scraperFields", []);
-    const apiUrl = GM_getValue("apiUrl", "http://localhost:3000/api/list");
+    const defaultConfig = {
+        nextPageSelector: ".pager .next a",
+        apiUrl: "http://localhost:3000/api/list",
+        fields: []
+    };
+
+    const domain = window.location.hostname;
+    const settingsKey = `scraperSettings_${domain}`;
+    const savedConfig = GM_getValue(settingsKey, null) || defaultConfig;
 
     function runJob() {
         const data = [];
 
-        document.querySelectorAll(savedFields.length > 0 ? savedFields[0].selector : "").forEach(element => {
+        document.querySelectorAll(savedConfig.fields.length > 0 ? savedConfig.fields[0].selector : "").forEach(element => {
             const item = {};
-            savedFields.forEach(field => {
+            savedConfig.fields.forEach(field => {
                 const value = field.attribute
                     ? element.querySelector(field.selector)?.getAttribute(field.attribute)
                     : element.querySelector(field.selector)?.innerText.trim();
@@ -40,11 +44,9 @@
             if (Object.keys(item).length) data.push(item);
         });
 
-        const domain = window.location.hostname;
-
         GM_xmlhttpRequest({
             method: "POST",
-            url: apiUrl,
+            url: savedConfig.apiUrl,
             data: JSON.stringify({ domain, data }),
             headers: { "Content-Type": "application/json" },
             onload: function(response) {
@@ -52,7 +54,7 @@
                     const serverResponse = JSON.parse(response.response);
                     if (serverResponse.success) {
                         console.log("Данные успешно отправлены.");
-                        const nextButton = document.querySelector(savedNextPageSelector);
+                        const nextButton = document.querySelector(savedConfig.nextPageSelector);
                         nextButton ? nextButton.click() : console.log("Кнопка следующей страницы не найдена.");
                     } else {
                         console.error("Ошибка сервера:", serverResponse.message);
@@ -117,22 +119,12 @@
             }
         `);
 
-        const config = {
-            nextPageSelector: savedNextPageSelector,
-            apiUrl: apiUrl,
-            fields: savedFields
-        };
-
-        document.getElementById("json-config").value = JSON.stringify(config, null, 4);
+        document.getElementById("json-config").value = JSON.stringify(savedConfig, null, 4);
 
         document.getElementById("save-settings").addEventListener("click", () => {
             try {
                 const newConfig = JSON.parse(document.getElementById("json-config").value);
-
-                GM_setValue(nextPageSelectorKey, newConfig.nextPageSelector);
-                GM_setValue("apiUrl", newConfig.apiUrl);
-                GM_setValue("scraperFields", newConfig.fields);
-
+                GM_setValue(settingsKey, newConfig);
                 alert("Настройки сохранены!");
             } catch (e) {
                 alert("Ошибка в формате JSON: " + e.message);
