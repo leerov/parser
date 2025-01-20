@@ -1,11 +1,14 @@
 // ==UserScript==
 // @name         Internet Scraper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
-// @description  Скрапинг данных о книгах с Books to Scrape
+// @version      0.1.2
+// @description  Scraper
 // @author       Leerov
 // @match        https://books.toscrape.com/catalogue/category/books_1/*
 // @grant        GM_xmlhttpRequest
+// @homepageURL  https://github.com/leerov/parser
+// @updateURL    https://raw.githubusercontent.com/leerov/parser/main/tm_script_Harlequin.js
+// @downloadURL  https://raw.githubusercontent.com/leerov/parser/main/tm_script_Harlequin.js
 // ==/UserScript==
 
 function runJob() {
@@ -24,7 +27,6 @@ function runJob() {
         });
     });
 
-    // Получаем домен сайта
     var domain = window.location.hostname;
 
     GM_xmlhttpRequest({
