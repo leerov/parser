@@ -7,8 +7,8 @@
 // @match        https://books.toscrape.com/catalogue/category/books_1/*
 // @grant        GM_xmlhttpRequest
 // @homepageURL  https://github.com/leerov/parser
-// @updateURL    https://raw.githubusercontent.com/leerov/parser/main/tm_script_Harlequin.js
-// @downloadURL  https://raw.githubusercontent.com/leerov/parser/main/tm_script_Harlequin.js
+// @updateURL    https://raw.githubusercontent.com/leerov/parser/main/script.js
+// @downloadURL  https://raw.githubusercontent.com/leerov/parser/main/script.js
 // ==/UserScript==
 
 function runJob() {
