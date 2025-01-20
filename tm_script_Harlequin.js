@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         Book Scraper
+// @name         Internet Scraper
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.1.1
 // @description  Скрапинг данных о книгах с Books to Scrape
-// @author       Вы
+// @author       Leerov
 // @match        https://books.toscrape.com/catalogue/category/books_1/*
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
