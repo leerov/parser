@@ -31,4 +31,5 @@
 
     GM_registerMenuCommand('Открыть настройки', UI.showSettings);
     GM_registerMenuCommand('Переключить парсинг', Settings.toggleParsing);
+    GM_registerMenuCommand('Режим выбора элементов', UI.enableSelectionMode);
 })();
