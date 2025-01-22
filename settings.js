@@ -24,10 +24,18 @@ const Settings = (function () {
         alert(`Парсинг ${config.isParsing ? 'включен' : 'выключен'}.`);
     }
 
+    function addField(selector, name, attribute) {
+        const config = load();
+        config.fields.push({ name, selector, attribute });
+        save(config);
+        alert(`Добавлено поле: { name: "${name}", selector: "${selector}", attribute: "${attribute || 'innerText'}" }`);
+    }
+
     return {
         load,
         save,
         toggleParsing,
+        addField,
         isParsing: () => load().isParsing,
     };
 })();

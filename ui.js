@@ -1,4 +1,54 @@
 const UI = (function () {
+    function enableSelectionMode() {
+        alert('Выберите элементы на странице. Нажмите ESC для выхода.');
+
+        const onClick = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const selector = getUniqueSelector(event.target);
+            const name = prompt('Введите имя поля (например, "price"):', '');
+            if (!name) return;
+
+            const attribute = prompt('Введите атрибут для получения значения (например, "src", оставьте пустым для innerText):', '');
+            Settings.addField(selector, name, attribute);
+        };
+
+        const onKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                document.removeEventListener('click', onClick, true);
+                document.removeEventListener('keydown', onKeyDown, true);
+                alert('Режим выбора элементов отключен.');
+            }
+        };
+
+        document.addEventListener('click', onClick, true);
+        document.addEventListener('keydown', onKeyDown, true);
+    }
+
+    function getUniqueSelector(element) {
+        const path = [];
+        while (element) {
+            let selector = element.nodeName.toLowerCase();
+            if (element.id) {
+                selector += `#${element.id}`;
+                path.unshift(selector);
+                break;
+            } else {
+                let siblingIndex = 1;
+                let sibling = element.previousElementSibling;
+                while (sibling) {
+                    if (sibling.nodeName === element.nodeName) siblingIndex++;
+                    sibling = sibling.previousElementSibling;
+                }
+                if (siblingIndex > 1) selector += `:nth-of-type(${siblingIndex})`;
+            }
+            path.unshift(selector);
+            element = element.parentElement;
+        }
+        return path.join(' > ');
+    }
+
     function showSettings() {
         const config = Settings.load();
         const settingsHTML = `
@@ -12,6 +62,7 @@ const UI = (function () {
                 </div>
                 <div id="scraper-settings-footer">
                     <button id="save-settings">Сохранить</button>
+                    <button id="clear-selectors">Очистить селекторы</button>
                     <button id="close-settings">Закрыть</button>
                 </div>
             </div>
@@ -101,11 +152,21 @@ const UI = (function () {
             });
 
         document
+            .getElementById('clear-selectors')
+            .addEventListener('click', () => {
+                Settings.clearSelectors();
+                textarea.value = JSON.stringify(Settings.load(), null, 4);
+            });
+
+        document
             .getElementById('close-settings')
             .addEventListener('click', () => {
                 settingsDiv.remove();
             });
     }
 
-    return { showSettings };
+    return { showSettings, enableSelectionMode };
 })();
+
+
+UI.enableSelectionMode();
