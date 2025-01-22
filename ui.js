@@ -169,4 +169,3 @@ const UI = (function () {
 })();
 
 
-UI.enableSelectionMode();
