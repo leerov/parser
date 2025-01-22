@@ -62,6 +62,7 @@ const UI = (function () {
                 </div>
                 <div id="scraper-settings-footer">
                     <button id="save-settings">Сохранить</button>
+                    <button id="add-differences">Добавить различия</button>
                     <button id="clear-selectors">Очистить селекторы</button>
                     <button id="close-settings">Закрыть</button>
                 </div>
@@ -152,6 +153,19 @@ const UI = (function () {
             });
 
         document
+            .getElementById('add-differences')
+            .addEventListener('click', () => {
+                const differencesJSON = prompt('Введите различия в формате JSON:');
+                try {
+                    const differences = JSON.parse(differencesJSON);
+                    Settings.addFieldsFromDifferences(differences);
+                    textarea.value = JSON.stringify(Settings.load(), null, 4);
+                } catch (e) {
+                    alert('Ошибка: ' + e.message);
+                }
+            });
+
+        document
             .getElementById('clear-selectors')
             .addEventListener('click', () => {
                 Settings.clearSelectors();
@@ -167,5 +181,3 @@ const UI = (function () {
 
     return { showSettings, enableSelectionMode };
 })();
-
-

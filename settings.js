@@ -31,11 +31,33 @@ const Settings = (function () {
         alert(`Добавлено поле: { name: "${name}", selector: "${selector}", attribute: "${attribute || 'innerText'}" }`);
     }
 
+    function addFieldsFromDifferences(differences) {
+        const config = load();
+        differences.forEach((diff) => {
+            if (diff.type === 'text') {
+                config.fields.push({
+                    name: `Text at ${diff.path}`,
+                    selector: diff.path,
+                    attribute: 'innerText',
+                });
+            } else if (diff.type === 'attribute') {
+                config.fields.push({
+                    name: `Attribute ${diff.attribute} at ${diff.path}`,
+                    selector: diff.path,
+                    attribute: diff.attribute,
+                });
+            }
+        });
+        save(config);
+        alert('Выбранные различия сохранены в конфигурации!');
+    }
+
     return {
         load,
         save,
         toggleParsing,
         addField,
+        addFieldsFromDifferences,
         isParsing: () => load().isParsing,
     };
 })();
