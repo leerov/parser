@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Parser by Leerov
 // @namespace    http://tampermonkey.net/
-// @version      0.1.11
+// @version      0.1.12
 // @description  Universal scraper with dynamic settings, field management, and manual start
 // @author       Leerov
 // @match        *://*/*
@@ -30,12 +30,6 @@
   const savedConfig = GM_getValue(settingsKey, null) || defaultConfig;
 
   function main() {
-      if (savedConfig.isParsing) {
-          console.log("Парсинг уже запущен.");
-          return;
-      }
-      savedConfig.isParsing = true; // Устанавливаем статус парсинга
-      GM_setValue(settingsKey, savedConfig); // Сохраняем статус
 
       const data = [];
 
@@ -170,30 +164,16 @@
       });
   }
 
-  function showStartButton() {
-      const startButton = document.createElement("button");
-      startButton.innerText = "Настройки";
-      startButton.style.position = "fixed";
-      startButton.style.bottom = "20px";
-      startButton.style.right = "20px";
-      startButton.style.padding = "10px";
-      startButton.style.backgroundColor = "#007bff";
-      startButton.style.color = "white";
-      startButton.style.border = "none";
-      startButton.style.cursor = "pointer";
-      startButton.style.zIndex = "10000";
-      document.body.appendChild(startButton);
-
-      startButton.addEventListener("click", showSettings);
-  }
+  if (savedConfig.isParsing) {
+    console.log("Парсинг включен.");
+    main();
+} else {
+    console.log("Парсинг выключен.");
+}
 
   GM_registerMenuCommand("Открыть настройки", showSettings);
-  showStartButton(); // Показываем кнопку для открытия настроек
 
-  // Если парсинг уже запущен, можно отобразить соответствующее сообщение
-  if (savedConfig.isParsing) {
-      console.log("Парсинг уже запущен.");
-  }
+  GM_registerMenuCommand("Переключить парсинг", toggleParsing);
 })();
 
 
