@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://static.vecteezy.com/system/resources/previews/000/498/025/non_2x/analysis-icon-design-vector.jpg
 // @namespace    http://tampermonkey.net/
-// @version      0.1.14
+// @version      0.1.15
 // @description  Modularized universal scraper with dynamic settings, field management, and manual start
 // @author       Leerov
 // @match        *://*/*
