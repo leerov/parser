@@ -3,10 +3,10 @@ const Settings = (function () {
     const settingsKey = `scraperSettings_${domain}`;
 
     const defaultConfig = {
-        nextPageSelector: "",
-        apiUrl: "http://localhost:3000/api/list",
-        fields: [{ name: "src", selector: "a", attribute: "src" }],
-        isParsing: false
+        nextPageSelector: '',
+        apiUrl: 'http://localhost:3000/api/list',
+        fields: [{ name: 'src', selector: 'a', attribute: 'src' }],
+        isParsing: false,
     };
 
     function load() {
@@ -21,7 +21,7 @@ const Settings = (function () {
         const config = load();
         config.isParsing = !config.isParsing;
         save(config);
-        alert(`Парсинг ${config.isParsing ? "включен" : "выключен"}.`);
+        alert(`Парсинг ${config.isParsing ? 'включен' : 'выключен'}.`);
     }
 
     return {

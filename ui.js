@@ -11,7 +11,7 @@ const UI = (function () {
             </div>
         `;
 
-        const settingsDiv = document.createElement("div");
+        const settingsDiv = document.createElement('div');
         settingsDiv.innerHTML = settingsHTML;
         document.body.appendChild(settingsDiv);
 
@@ -27,23 +27,27 @@ const UI = (function () {
             }
         `);
 
-        const textarea = document.getElementById("json-config");
+        const textarea = document.getElementById('json-config');
         textarea.value = JSON.stringify(config, null, 4);
 
-        document.getElementById("save-settings").addEventListener("click", () => {
-            try {
-                const newConfig = JSON.parse(textarea.value);
-                Settings.save(newConfig);
-                alert("Настройки сохранены!");
-                settingsDiv.remove();
-            } catch (e) {
-                alert("Ошибка: " + e.message);
-            }
-        });
+        document
+            .getElementById('save-settings')
+            .addEventListener('click', () => {
+                try {
+                    const newConfig = JSON.parse(textarea.value);
+                    Settings.save(newConfig);
+                    alert('Настройки сохранены!');
+                    settingsDiv.remove();
+                } catch (e) {
+                    alert('Ошибка: ' + e.message);
+                }
+            });
 
-        document.getElementById("close-settings").addEventListener("click", () => {
-            settingsDiv.remove();
-        });
+        document
+            .getElementById('close-settings')
+            .addEventListener('click', () => {
+                settingsDiv.remove();
+            });
     }
 
     return { showSettings };
