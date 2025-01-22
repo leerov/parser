@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Parser by Leerov
 // @namespace    http://tampermonkey.net/
-// @version      0.1.10
+// @version      0.1.11
 // @description  Universal scraper with dynamic settings, field management, and manual start
 // @author       Leerov
 // @match        *://*/*
@@ -22,6 +22,7 @@
       nextPageSelector: "",
       apiUrl: "http://localhost:3000/api/list",
       fields: [{ name: "src", selector: "a", attribute: "src" }],
+      isParsing: false // Добавлено поле для статуса парсинга
   };
 
   const domain = window.location.hostname;
@@ -29,6 +30,13 @@
   const savedConfig = GM_getValue(settingsKey, null) || defaultConfig;
 
   function main() {
+      if (savedConfig.isParsing) {
+          console.log("Парсинг уже запущен.");
+          return;
+      }
+      savedConfig.isParsing = true; // Устанавливаем статус парсинга
+      GM_setValue(settingsKey, savedConfig); // Сохраняем статус
+
       const data = [];
 
       document.querySelectorAll(savedConfig.fields[0].selector).forEach((element) => {
@@ -50,6 +58,8 @@
 
       if (data.length === 0) {
           console.error("Нет данных для отправки.");
+          savedConfig.isParsing = false; // Сбрасываем статус парсинга
+          GM_setValue(settingsKey, savedConfig); // Сохраняем статус
           return;
       }
 
@@ -74,10 +84,15 @@
                   }
               } catch (err) {
                   console.error("Ошибка обработки ответа сервера:", err);
+              } finally {
+                  savedConfig.isParsing = false; // Сбрасываем статус парсинга
+                  GM_setValue(settingsKey, savedConfig); // Сохраняем статус
               }
           },
           onerror: function (err) {
               console.error("Ошибка запроса:", err);
+              savedConfig.isParsing = false; // Сбрасываем статус парсинга
+              GM_setValue(settingsKey, savedConfig); // Сохраняем статус
           },
       });
   }
@@ -98,7 +113,7 @@
       document.body.appendChild(settingsDiv);
 
       GM_addStyle(`
-            #scraper-settings {
+                        #scraper-settings {
                 position: fixed;
                 top: 20px;
                 right: 20px;
@@ -155,24 +170,30 @@
       });
   }
 
-  function showParseButton() {
-      const parseButton = document.createElement("button");
-      parseButton.innerText = "Начать парсинг";
-      parseButton.style.position = "fixed";
-      parseButton.style.bottom = "20px";
-      parseButton.style.right = "20px";
-      parseButton.style.padding = "10px";
-      parseButton.style.backgroundColor = "#28a745";
-      parseButton.style.color = "white";
-      parseButton.style.border = "none";
-      parseButton.style.cursor = "pointer";
-      parseButton.style.zIndex = "10000";
-      document.body.appendChild(parseButton);
+  function showStartButton() {
+      const startButton = document.createElement("button");
+      startButton.innerText = "Настройки";
+      startButton.style.position = "fixed";
+      startButton.style.bottom = "20px";
+      startButton.style.right = "20px";
+      startButton.style.padding = "10px";
+      startButton.style.backgroundColor = "#007bff";
+      startButton.style.color = "white";
+      startButton.style.border = "none";
+      startButton.style.cursor = "pointer";
+      startButton.style.zIndex = "10000";
+      document.body.appendChild(startButton);
 
-      parseButton.addEventListener("click", main);
+      startButton.addEventListener("click", showSettings);
   }
 
   GM_registerMenuCommand("Открыть настройки", showSettings);
-  showParseButton();
+  showStartButton(); // Показываем кнопку для открытия настроек
+
+  // Если парсинг уже запущен, можно отобразить соответствующее сообщение
+  if (savedConfig.isParsing) {
+      console.log("Парсинг уже запущен.");
+  }
 })();
+
 
