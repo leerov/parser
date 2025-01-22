@@ -2,9 +2,19 @@ const UI = (function () {
     function enableSelectionMode() {
         alert('Выберите элементы на странице. Нажмите ESC для выхода.');
 
+        let selectedElement = null;
+
         const onClick = (event) => {
             event.preventDefault();
             event.stopPropagation();
+
+            
+            if (selectedElement) {
+                selectedElement.style.border = '';
+            }
+
+            selectedElement = event.target;
+            selectedElement.style.border = '2px solid red';
 
             const selector = getUniqueSelector(event.target);
             const name = prompt('Введите имя поля (например, "price"):', '');
@@ -19,6 +29,9 @@ const UI = (function () {
                 document.removeEventListener('click', onClick, true);
                 document.removeEventListener('keydown', onKeyDown, true);
                 alert('Режим выбора элементов отключен.');
+                if (selectedElement) {
+                    selectedElement.style.border = '';
+                }
             }
         };
 
@@ -64,6 +77,7 @@ const UI = (function () {
                     <button id="add-differences">Добавить различия</button>
                     <button id="clear-selectors">Очистить селекторы</button>
                     <button id="close-settings">Закрыть</button>
+                    <button id="export-settings">Экспортировать настройки</button>
                 </div>
             </div>
         `;
@@ -169,6 +183,17 @@ const UI = (function () {
             .addEventListener('click', () => {
                 Settings.clearSelectors();
                 textarea.value = JSON.stringify(Settings.load(), null, 4);
+            });
+
+        document
+            .getElementById('export-settings')
+            .addEventListener('click', () => {
+                const configData = JSON.stringify(Settings.load(), null, 4);
+                const blob = new Blob([configData], { type: 'application/json' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'settings.json';
+                link.click();
             });
 
         document

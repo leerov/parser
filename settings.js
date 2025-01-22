@@ -1,6 +1,7 @@
 const Settings = (function () {
     const domain = window.location.hostname;
     const settingsKey = `scraperSettings_${domain}`;
+    let cachedConfig = null;  
 
     const defaultConfig = {
         nextPageSelector: '',
@@ -9,47 +10,62 @@ const Settings = (function () {
         isParsing: false,
     };
 
+    
     function load() {
-        return GM_getValue(settingsKey, null) || defaultConfig;
+        if (cachedConfig === null) {
+            cachedConfig = GM_getValue(settingsKey, null) || defaultConfig;
+        }
+        return cachedConfig;
     }
 
+    
     function save(config) {
-        GM_setValue(settingsKey, config);
+        try {
+            GM_setValue(settingsKey, config);
+            cachedConfig = config;  
+        } catch (error) {
+            console.error('Ошибка при сохранении настроек:', error);
+        }
     }
 
+    
     function toggleParsing() {
         const config = load();
         config.isParsing = !config.isParsing;
         save(config);
-        alert(`Парсинг ${config.isParsing ? 'включен' : 'выключен'}.`);
+        console.log(`Парсинг ${config.isParsing ? 'включен' : 'выключен'}.`);
     }
 
+    
     function addField(selector, name, attribute) {
         const config = load();
-        config.fields.push({ name, selector, attribute });
+        
+        
+        if (config.fields.some(field => field.name === name)) {
+            console.log(`Поле с именем "${name}" уже существует.`);
+            return;
+        }
+
+        config.fields.push({ name, selector, attribute: attribute || 'innerText' });
         save(config);
-        alert(`Добавлено поле: { name: "${name}", selector: "${selector}", attribute: "${attribute || 'innerText'}" }`);
+        console.log(`Добавлено поле: { name: "${name}", selector: "${selector}", attribute: "${attribute || 'innerText'}" }`);
     }
 
+    
     function addFieldsFromDifferences(differences) {
         const config = load();
         differences.forEach((diff) => {
-            if (diff.type === 'text') {
-                config.fields.push({
-                    name: `Text at ${diff.path}`,
-                    selector: diff.path,
-                    attribute: 'innerText',
-                });
-            } else if (diff.type === 'attribute') {
-                config.fields.push({
-                    name: `Attribute ${diff.attribute} at ${diff.path}`,
-                    selector: diff.path,
-                    attribute: diff.attribute,
-                });
+            const field = diff.type === 'text'
+                ? { name: `Text at ${diff.path}`, selector: diff.path, attribute: 'innerText' }
+                : { name: `Attribute ${diff.attribute} at ${diff.path}`, selector: diff.path, attribute: diff.attribute };
+
+            
+            if (!config.fields.some(f => f.name === field.name)) {
+                config.fields.push(field);
             }
         });
         save(config);
-        alert('Выбранные различия сохранены в конфигурации!');
+        console.log('Выбранные различия сохранены в конфигурации!');
     }
 
     return {
