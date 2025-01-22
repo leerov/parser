@@ -57,7 +57,6 @@ const UI = (function () {
                     <h2>Настройки</h2>
                 </div>
                 <div id="scraper-settings-body">
-                    <h3>JSON-конфигурация</h3>
                     <textarea id="json-config"></textarea>
                 </div>
                 <div id="scraper-settings-footer">
