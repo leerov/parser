@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.2.16
+// @version      0.2.18
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -48,6 +48,7 @@
 
     let currentStep = savedConfig.currentStep;
 
+    // Функция сохранения конфигурации
     const saveConfiguration = (result) => {
         const config = GM_getValue(`${domain}_config`);
         config.steps[currentStep].result = result;
@@ -58,6 +59,7 @@
         });
     };
 
+    // Функция для создания панели с текущим шагом
     const createStepBar = (stepIndex) => {
         const stepBar = document.createElement('div');
         Object.assign(stepBar.style, {
@@ -100,13 +102,16 @@
         });
 
         actionButton.addEventListener('click', async () => {
-            const stepFunction = window[`step${currentStep}`];
-            if (stepFunction) {
+            const stepFunction = window[`step${currentStep}`]; // Получаем функцию для текущего шага
+
+            // Проверка, что функция существует
+            if (typeof stepFunction === 'function') {
                 try {
                     const result = await stepFunction();
                     if (result !== null) {
                         saveConfiguration(result);
                         currentStep++;
+
                         if (currentStep < steps.length) {
                             stepBar.remove();
                             createStepBar(currentStep);
@@ -122,6 +127,8 @@
                     console.error('Ошибка выполнения шага:', error);
                     alert('Произошла ошибка. Проверьте консоль.');
                 }
+            } else {
+                alert('Функция для текущего шага не найдена!');
             }
         });
 
@@ -135,6 +142,7 @@
         stepBar.addEventListener('mouseleave', () => {
             stepBar.style.top = '-40px';
         });
+
         function addExcludeClassRecursively(element) {
             element.classList.add('exclude-from-selection');
             element.querySelectorAll('*').forEach(addExcludeClassRecursively);
@@ -142,9 +150,6 @@
 
         addExcludeClassRecursively(stepBar);
     };
-
-    window.step0 = () => selectElement("Выбрать первый элемент");
-    window.step1 = () => selectElement("Выбрать второй элемент");
 
     createStepBar(currentStep);
 })();
