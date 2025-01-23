@@ -7,14 +7,7 @@ function highlightElements(xpath) {
 
         // Выполняем XPath-запрос
         const result = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-
-        // Проверяем, есть ли результаты
-        if (result.snapshotLength === 0) {
-            console.warn(`No elements found for XPath: ${xpath}`);
-            showAlert(`Элементы не найдены для XPath: ${xpath}`);
-            return;
-        }
-
+        
         // Выделяем элементы по XPath
         for (let i = 0; i < result.snapshotLength; i++) {
             const element = result.snapshotItem(i);
