@@ -34,6 +34,12 @@ window.selectFirstElement = () => {
         const handleClick = (event) => {
             if (!isSelecting) return;
 
+            // Игнорируем саму кнопку запуска
+            if (event.target.classList.contains("exclude-from-selection")) {
+                console.log("Нажата кнопка запуска. Игнорируется.");
+                return;
+            }
+
             event.preventDefault();
             event.stopPropagation();
 
@@ -161,7 +167,7 @@ window.selectFirstElement = () => {
             document.addEventListener("click", handleClick);
         };
 
-        // Для активации выбора элемента вызовите `startSelecting()`
+        // Для активации выбора элемента, запускаем `startSelecting()`
         startSelecting();
     });
 };

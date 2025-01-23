@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.2.9
+// @version      0.2.10
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -71,10 +71,10 @@
         const stepBar = document.createElement('div');
         Object.assign(stepBar.style, {
             position: 'fixed',
-            top: '10px', // Отступ от верхнего края
-            left: '50%', // Центрирование по горизонтали
-            transform: 'translateX(-50%)', // Центрирование по горизонтали
-            width: 'calc(100% - 40px)', // Ширина с отступами
+            top: '10px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'calc(100% - 40px)',
             backgroundColor: '#333',
             color: '#fff',
             padding: '10px 20px',
@@ -85,22 +85,22 @@
             boxShadow: '0 2px 5px rgba(0, 0, 0, 0.5)',
             transition: 'top 0.3s'
         });
-    
+
         const stepNumber = document.createElement('span');
         stepNumber.textContent = `Шаг ${stepIndex + 1} из ${steps.length}`;
-    
+
         const stepTitle = document.createElement('span');
         stepTitle.textContent = steps[stepIndex];
-    
+
         const actionButton = document.createElement('button');
         actionButton.innerHTML = '▶';
         Object.assign(actionButton.style, {
-            width: '40px', // Ширина кнопки
-            height: '40px', // Высота кнопки
+            width: '40px',
+            height: '40px',
             backgroundColor: 'green',
             color: '#fff',
             border: 'none',
-            borderRadius: '5px', // Углы кнопки
+            borderRadius: '5px',
             cursor: 'pointer',
             fontSize: '20px',
             display: 'flex',
@@ -108,32 +108,33 @@
             alignItems: 'center'
         });
 
+        // Исключаем кнопку из выбора
+        actionButton.classList.add('exclude-from-selection');
+
         actionButton.addEventListener('click', async () => {
             const currentFunction = Object.values(stepFunctions)[currentStep];
         
             if (currentFunction) {
                 try {
-                    // Ждем результат выполнения функции (Promise)
                     const result = await currentFunction();
-                    saveConfiguration(result); // Сохраняем результат
+                    saveConfiguration(result);
                 } catch (error) {
                     console.error("Ошибка выполнения шага:", error);
                     alert("Произошла ошибка. Проверьте консоль.");
                     return;
                 }
             }
-        
+
             currentStep++;
             if (currentStep < steps.length) {
                 stepBar.remove();
-                createStepBar(currentStep); // Инициализируем следующий шаг
+                createStepBar(currentStep);
             } else {
                 alert('Парсинг завершен!');
                 stepBar.remove();
                 GM_setValue(`${domain}_config`, null);
             }
         });
-        
 
         stepBar.append(stepNumber, stepTitle, actionButton);
         document.body.insertBefore(stepBar, document.body.firstChild);
@@ -149,4 +150,3 @@
 
     createStepBar(currentStep);
 })();
-
