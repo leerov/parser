@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.2.20
+// @version      0.2.21
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -165,6 +165,13 @@
         stepBar.addEventListener('mouseleave', () => {
             stepBar.style.top = '-40px';
         });
+
+        function addExcludeClassRecursively(element) {
+            element.classList.add('exclude-from-selection');
+            element.querySelectorAll('*').forEach(addExcludeClassRecursively);
+        }
+
+        addExcludeClassRecursively(stepBar);
     };
 
     window.step0 = () => selectElement("Выбрать первый элемент");
