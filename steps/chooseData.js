@@ -105,7 +105,6 @@ window.chooseData = () => {
                 const secondResult = config.steps[1]?.result;
                 const commonPath = getCommonPath(firstResult, secondResult);
 
-                // Открываем редактор пути
                 const pathEditor = document.createElement('input');
                 pathEditor.type = 'text';
                 pathEditor.value = commonPath;
@@ -113,6 +112,13 @@ window.chooseData = () => {
                 pathEditor.style.margin = '10px';
                 pathEditor.id = 'pathEditor'; // Добавляем уникальный id
                 pathEditor.name = 'pathEditor'; // Добавляем уникальный name
+                
+                // Стилизация элемента
+                pathEditor.style.background = 'rgba(128, 128, 128, 0.5)'; // Полупрозрачный серый фон
+                pathEditor.style.borderRadius = '10px'; // Закругленные края
+                pathEditor.style.color = 'black'; // Черный текст
+                pathEditor.style.border = 'none'; // Убираем рамку (по желанию)
+                pathEditor.style.padding = '10px'; // Добавляем отступы для удобства
                 document.body.appendChild(pathEditor);
 
                 // Добавляем обработчик изменения пути
