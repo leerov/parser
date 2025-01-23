@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.2.6
+// @version      0.2.7
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -71,9 +71,10 @@
         const stepBar = document.createElement('div');
         Object.assign(stepBar.style, {
             position: 'fixed',
-            top: '-40px',
-            left: '0',
-            width: 'calc(100% - 40px)',
+            top: '10px', // Отступ от верхнего края
+            left: '50%', // Центрирование по горизонтали
+            transform: 'translateX(-50%)', // Центрирование по горизонтали
+            width: 'calc(100% - 40px)', // Ширина с отступами
             backgroundColor: '#333',
             color: '#fff',
             padding: '10px 20px',
@@ -84,23 +85,27 @@
             boxShadow: '0 2px 5px rgba(0, 0, 0, 0.5)',
             transition: 'top 0.3s'
         });
-
+    
         const stepNumber = document.createElement('span');
         stepNumber.textContent = `Шаг ${stepIndex + 1} из ${steps.length}`;
-
+    
         const stepTitle = document.createElement('span');
         stepTitle.textContent = steps[stepIndex];
-
+    
         const actionButton = document.createElement('button');
         actionButton.innerHTML = '&#9658;';
         Object.assign(actionButton.style, {
-            height: '40px',
+            width: '40px', // Ширина кнопки
+            height: '40px', // Высота кнопки
             backgroundColor: 'green',
             color: '#fff',
             border: 'none',
-            borderRadius: '25%',
+            borderRadius: '5px', // Углы кнопки
             cursor: 'pointer',
-            fontSize: '20px'
+            fontSize: '20px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
         });
 
         actionButton.addEventListener('click', async () => {

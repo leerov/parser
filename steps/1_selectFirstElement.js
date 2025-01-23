@@ -42,11 +42,14 @@ window.selectFirstElement = () => {
             highlightElement(selectedElement);
 
             console.log("Выбран элемент:", selectedElement);
+
+            // Показываем модальное окно только после выбора элемента
             showConfirmationModal();
         };
 
         const showConfirmationModal = () => {
-            // Создание модального окна
+            if (!selectedElement) return;
+
             const modal = document.createElement('div');
             Object.assign(modal.style, {
                 position: 'fixed',
@@ -108,8 +111,11 @@ window.selectFirstElement = () => {
                 // Удаляем модальное окно
                 modal.remove();
 
-                // Возвращаем выбранный элемент через Promise
-                resolve(selectedElement);
+                // Сохраняем XPath элемента
+                const elementXPath = generateXPath(selectedElement);
+
+                // Возвращаем XPath через Promise
+                resolve(elementXPath);
             });
 
             cancelButton.addEventListener('click', () => {
@@ -117,13 +123,33 @@ window.selectFirstElement = () => {
                 removeHighlight(selectedElement);
                 selectedElement = null;
 
-                // Удаляем модальное окно
                 modal.remove();
             });
 
             modalContent.append(message, confirmButton, cancelButton);
             modal.appendChild(modalContent);
             document.body.appendChild(modal);
+        };
+
+        const generateXPath = (element) => {
+            if (element.id) {
+                return `//*[@id="${element.id}"]`;
+            }
+            const parts = [];
+            while (element && element.nodeType === Node.ELEMENT_NODE) {
+                let sibling = element;
+                let index = 1;
+                while ((sibling = sibling.previousElementSibling)) {
+                    if (sibling.nodeName === element.nodeName) {
+                        index++;
+                    }
+                }
+                const tagName = element.nodeName.toLowerCase();
+                const part = index > 1 ? `${tagName}[${index}]` : tagName;
+                parts.unshift(part);
+                element = element.parentNode;
+            }
+            return `/${parts.join('/')}`;
         };
 
         document.addEventListener("mouseover", handleMouseOver);
