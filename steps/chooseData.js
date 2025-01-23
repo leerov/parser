@@ -101,16 +101,15 @@ window.chooseData = () => {
                 const pathEditor = document.createElement('input');
                 pathEditor.type = 'text';
                 pathEditor.value = commonPath;
-                pathEditor.style.width = '300px';
-                pathEditor.style.margin = '10px';
                 pathEditor.id = 'pathEditor'; // Добавляем уникальный id
                 pathEditor.name = 'pathEditor'; // Добавляем уникальный name
-
+                
                 // Стилизация элемента с использованием Object.assign
                 Object.assign(pathEditor.style, {
-                    position:'absolute',
-                    top: '50vh',
-                    left: '50vw',
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
                     width: '300px',
                     margin: '10px',
                     background: 'rgba(128, 128, 128, 0.5)', // Полупрозрачный серый фон
@@ -120,6 +119,10 @@ window.chooseData = () => {
                     padding: '10px', // Добавляем отступы для удобства
                     zIndex: '10000'
                 });
+                
+                // Установка курсора в конец строки
+                pathEditor.focus();
+                pathEditor.setSelectionRange(pathEditor.value.length, pathEditor.value.length);
 
                 document.body.appendChild(pathEditor);
 
