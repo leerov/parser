@@ -111,6 +111,8 @@ window.chooseData = () => {
                 pathEditor.value = commonPath;
                 pathEditor.style.width = '300px';
                 pathEditor.style.margin = '10px';
+                pathEditor.id = 'pathEditor'; // Добавляем уникальный id
+                pathEditor.name = 'pathEditor'; // Добавляем уникальный name
                 document.body.appendChild(pathEditor);
 
                 // Добавляем обработчик изменения пути
