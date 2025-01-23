@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      0.2.4
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -50,11 +50,20 @@
         startParsing: window.startParsing
     };
 
-    const saveConfiguration = () => {
+    const saveConfiguration = (result) => {
+        const stepsData = savedConfig?.steps || steps.map((step, index) => ({
+            stepIndex: index,
+            info: step,
+            result: null
+        }));
+
+        // Сохраняем результат текущего шага
+        stepsData[currentStep].result = result;
+
         GM_setValue(`${domain}_config`, {
             domain,
             currentStep,
-            parsingInfo: steps[currentStep]
+            steps: stepsData
         });
     };
 
@@ -96,11 +105,11 @@
 
         actionButton.addEventListener('click', () => {
             const currentFunction = Object.values(stepFunctions)[currentStep];
-            currentFunction?.();
+            const result = currentFunction?.(); // Получаем результат выполнения функции
+
+            saveConfiguration(result);
 
             currentStep++;
-            saveConfiguration();
-
             if (currentStep < steps.length) {
                 stepBar.remove();
                 createStepBar(currentStep);
@@ -125,3 +134,4 @@
 
     createStepBar(currentStep);
 })();
+
