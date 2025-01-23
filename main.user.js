@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.2.10
+// @version      0.2.11
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -108,9 +108,6 @@
             alignItems: 'center'
         });
 
-        // Исключаем кнопку из выбора
-        actionButton.classList.add('exclude-from-selection');
-
         actionButton.addEventListener('click', async () => {
             const currentFunction = Object.values(stepFunctions)[currentStep];
         
@@ -147,6 +144,6 @@
             stepBar.style.top = '-40px';
         });
     };
-
+    stepBar.querySelectorAll('*').forEach(el => el.classList.add('exclude-from-selection'));
     createStepBar(currentStep);
 })();
