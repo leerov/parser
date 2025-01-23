@@ -2,13 +2,17 @@ function highlightElements(xpath) {
     try {
         // Удаляем предыдущие выделения
         document.querySelectorAll('*').forEach(element => {
-            element.style.outline = '';
-            element.style.backgroundColor = "";
+            // Проверяем, имеет ли элемент класс exclude-from-selection
+            if (!element.classList.contains('exclude-from-selection')) {
+                element.style.outline = '';
+                element.style.backgroundColor = "";
+            }
         });
+
 
         // Выполняем XPath-запрос
         const result = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        
+
         // Выделяем элементы по XPath
         for (let i = 0; i < result.snapshotLength; i++) {
             const element = result.snapshotItem(i);
@@ -132,7 +136,7 @@ window.chooseData = () => {
                 pathEditor.value = commonPath;
                 pathEditor.id = 'pathEditor'; // Добавляем уникальный id
                 pathEditor.name = 'pathEditor'; // Добавляем уникальный name
-                
+
                 // Стилизация поля ввода
                 Object.assign(pathEditor.style, {
                     width: '300px',
@@ -144,7 +148,7 @@ window.chooseData = () => {
                     borderRadius: '10px', // Закругленные края
                     zIndex: '10000'
                 });
-                
+
                 // Установка курсора в конец строки
                 pathEditor.focus();
                 pathEditor.setSelectionRange(pathEditor.value.length, pathEditor.value.length);
@@ -161,6 +165,7 @@ window.chooseData = () => {
                 // Добавляем поле ввода в контейнер
                 container.appendChild(pathEditor);
                 document.body.appendChild(container);
+                addExcludeClassRecursively(container);
             }
         } catch (error) {
             console.error('Error in chooseData function:', error);

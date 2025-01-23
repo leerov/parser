@@ -60,6 +60,8 @@ window.selectElement = () => {
         const showConfirmationModal = () => {
             if (!selectedElement) return;
 
+            
+
             const modal = document.createElement('div');
             Object.assign(modal.style, {
                 position: 'fixed',

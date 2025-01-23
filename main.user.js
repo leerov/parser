@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.3.10
+// @version      0.3.11
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -14,6 +14,7 @@
 // @homepageURL  https://github.com/leerov/parser
 // @updateURL    https://raw.githubusercontent.com/leerov/parser/main/main.user.js
 // @downloadURL  https://raw.githubusercontent.com/leerov/parser/main/main.user.js
+// @require      https://raw.githubusercontent.com/leerov/parser/main/util/addExcludeClassRecursively.js
 // @require      https://raw.githubusercontent.com/leerov/parser/main/steps/selectElement.js
 // @require      https://raw.githubusercontent.com/leerov/parser/main/steps/chooseData.js
 
@@ -163,10 +164,7 @@
             stepBar.style.top = '-40px';
         });
 
-        function addExcludeClassRecursively(element) {
-            element.classList.add('exclude-from-selection');
-            element.querySelectorAll('*').forEach(addExcludeClassRecursively);
-        }
+
 
         addExcludeClassRecursively(stepBar);
     };
