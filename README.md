@@ -25,12 +25,10 @@ Parser by Leerov is a modular script designed for website parsing using external
 ## 🔧 Features
 
 
-```markdown
 - **Modularity:** each step is loaded independently.
 - **Tampermonkey script:** easy browser integration.
 - **Logging:** uses Winston for seamless analysis.
 - **Auto-save:** parsing results are saved to local JSON files.
-```
 
 
 ---
@@ -97,7 +95,7 @@ node server.js
 ## 🚀 Roadmap
 
 
-- [ ] Implementation of element selection
+- [x] Implementation of element selection (in [0.2.21](https://github.com/leerov/parser/commit/34b9095250a5196abc7eabff87d18f9af36d683d))
 - [ ] Automatic data detection
 - [ ] Parsing testing
 
