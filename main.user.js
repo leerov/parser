@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.2.18
+// @version      0.2.19
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -50,14 +50,37 @@
 
     // Функция сохранения конфигурации
     const saveConfiguration = (result) => {
-        const config = GM_getValue(`${domain}_config`);
-        config.steps[currentStep].result = result;
-
-        GM_setValue(`${domain}_config`, {
-            ...config,
-            currentStep
+        // Получаем конфигурацию с дефолтными значениями, если она не существует
+        let config = GM_getValue(`${domain}_config`, {
+            domain,
+            currentStep: 0,
+            steps: steps.map((step, index) => ({
+                stepIndex: index,
+                info: step,
+                result: null
+            }))
         });
+    
+        // Проверяем, что steps существует и является массивом
+        if (!config.steps || !Array.isArray(config.steps)) {
+            console.error('Ошибка: свойство steps не определено или не является массивом');
+            return;
+        }
+    
+        // Если currentStep в пределах допустимого диапазона
+        if (currentStep >= 0 && currentStep < config.steps.length) {
+            config.steps[currentStep].result = result;
+    
+            // Сохраняем обновленную конфигурацию
+            GM_setValue(`${domain}_config`, {
+                ...config,
+                currentStep
+            });
+        } else {
+            console.error('Ошибка: currentStep выходит за пределы массива steps');
+        }
     };
+    
 
     // Функция для создания панели с текущим шагом
     const createStepBar = (stepIndex) => {
