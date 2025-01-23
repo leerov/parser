@@ -1,14 +1,14 @@
 # Parser by Leerov
 
 
-[![Tamper Monkey](https://www.tampermonkey.net/images/ape.svg)](https://www.tampermonkey.net/)
-[![Install the script](https://www.tampermonkey.net/images/ape.svg)](https://raw.githubusercontent.com/leerov/parser/refs/heads/main/main.user.js)
+[![Tamper Monkey](![Tampermonkey](https://img.shields.io/badge/tampermonkey-%2300485B.svg?style=for-the-badge&logo=tampermonkey&logoColor=white))](https://www.tampermonkey.net/)
+[![Install the script](![Tampermonkey](https://img.shields.io/badge/tampermonkey-%2300485B.svg?style=for-the-badge&logo=tampermonkey&logoColor=white))](https://raw.githubusercontent.com/leerov/parser/refs/heads/main/main.user.js)
 
-## Установить необходимые зависимости
+## Install the necessary dependencies
 ```bash
 npm install express cors cookie-parser lodash winston
 ```
-### Запустить сервер
+### Start the server
 ```bash
 node server.js
 ```
