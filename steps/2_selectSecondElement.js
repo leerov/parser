@@ -1,4 +1,4 @@
-window.selectFirstElement = () => {
+window.selectSecondElement = () => {
     return new Promise((resolve) => {
         console.log("Ожидание выбора элемента...");
 
