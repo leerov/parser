@@ -139,7 +139,7 @@ window.chooseData = () => {
 
                 // Стилизация поля ввода
                 Object.assign(pathEditor.style, {
-                    width: '300px',
+                    width: '80%',
                     margin: '10px',
                     background: 'black', // Черный фон
                     color: 'white', // Белый текст
@@ -159,6 +159,18 @@ window.chooseData = () => {
                     highlightElements(newPath);
                 });
 
+                // Добавляем обработчик нажатия клавиши
+                pathEditor.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        const inputValue = pathEditor.value;
+                        console.log('Содержимое input:', inputValue); // Возвращаем содержимое input
+                        // Удаляем все дочерние элементы контейнера
+                        while (container.firstChild) {
+                            container.removeChild(container.firstChild);
+                        }
+                    }
+                });
+
                 // Выделяем элементы по пути
                 highlightElements(commonPath);
 
@@ -172,4 +184,3 @@ window.chooseData = () => {
         }
     });
 };
-
