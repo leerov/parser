@@ -3,6 +3,7 @@ function highlightElements(xpath) {
         // Удаляем предыдущие выделения
         document.querySelectorAll('*').forEach(element => {
             element.style.outline = '';
+            element.style.backgroundColor = "";
         });
 
         // Выполняем XPath-запрос
@@ -98,6 +99,34 @@ window.chooseData = () => {
                 const secondResult = config.steps[1]?.result;
                 const commonPath = getCommonPath(firstResult, secondResult);
 
+                // Создаем контейнер для отображения результатов
+                const resultsContainer = document.createElement('div');
+                Object.assign(resultsContainer.style, {
+                    position: 'fixed',
+                    top: '40%', // Позиционируем выше поля ввода
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: '10000',
+                    textAlign: 'center',
+                    backgroundColor: 'black', // Черный фон
+                    padding: '10px',
+                    borderRadius: '10px',
+                });
+
+                // Создаем элементы для первого и второго результата
+                const firstResultElement = document.createElement('p');
+                firstResultElement.textContent = `Первый результат: ${firstResult || 'Нет данных'}`;
+                firstResultElement.style.color = 'white'; // Белый текст
+
+                const secondResultElement = document.createElement('p');
+                secondResultElement.textContent = `Второй результат: ${secondResult || 'Нет данных'}`;
+                secondResultElement.style.color = 'white'; // Белый текст
+
+                // Добавляем результаты в контейнер
+                resultsContainer.appendChild(firstResultElement);
+                resultsContainer.appendChild(secondResultElement);
+                document.body.appendChild(resultsContainer);
+
                 const pathEditor = document.createElement('input');
                 pathEditor.type = 'text';
                 pathEditor.value = commonPath;
@@ -112,11 +141,11 @@ window.chooseData = () => {
                     transform: 'translate(-50%, -50%)',
                     width: '300px',
                     margin: '10px',
-                    background: 'rgba(128, 128, 128, 0.5)', // Полупрозрачный серый фон
-                    borderRadius: '10px', // Закругленные края
-                    color: 'black', // Черный текст
+                    background: 'black', // Черный фон
+                    color: 'white', // Белый текст
                     border: 'none', // Убираем рамку (по желанию)
                     padding: '10px', // Добавляем отступы для удобства
+                    borderRadius: '10px', // Закругленные края
                     zIndex: '10000'
                 });
                 
