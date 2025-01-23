@@ -88,9 +88,17 @@ const showAlert = (message) => {
     document.body.appendChild(modal);
 };
 
+let container; // Переменная для хранения контейнера
+
 window.chooseData = () => {
     return new Promise((resolve) => {
         try {
+            // Проверяем, существует ли контейнер
+            if (container) {
+                console.warn('Контейнер уже существует. Невозможно создать новый.');
+                return; // Выходим из функции, если контейнер уже существует
+            }
+
             const domain = window.location.hostname;
             const config = GM_getValue(`${domain}_config`, {
                 domain,
@@ -104,7 +112,7 @@ window.chooseData = () => {
                 const commonPath = getCommonPath(firstResult, secondResult);
 
                 // Создаем общий контейнер для результатов и поля ввода
-                const container = document.createElement('div');
+                container = document.createElement('div'); // Присваиваем контейнер переменной
                 Object.assign(container.style, {
                     position: 'fixed',
                     top: '40%',
