@@ -99,18 +99,18 @@ window.chooseData = () => {
                 const secondResult = config.steps[1]?.result;
                 const commonPath = getCommonPath(firstResult, secondResult);
 
-                // Создаем контейнер для отображения результатов
-                const resultsContainer = document.createElement('div');
-                Object.assign(resultsContainer.style, {
+                // Создаем общий контейнер для результатов и поля ввода
+                const container = document.createElement('div');
+                Object.assign(container.style, {
                     position: 'fixed',
-                    top: '40%', // Позиционируем выше поля ввода
+                    top: '40%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
                     zIndex: '10000',
                     textAlign: 'center',
-                    backgroundColor: 'black', // Черный фон
-                    padding: '10px',
-                    borderRadius: '10px',
+                    backgroundColor: 'rgba(50, 50, 50, 0.8)', // Темный прозрачный серый фон
+                    padding: '20px', // Отступы
+                    borderRadius: '10px', // Закругленные края
                 });
 
                 // Создаем элементы для первого и второго результата
@@ -123,28 +123,24 @@ window.chooseData = () => {
                 secondResultElement.style.color = 'white'; // Белый текст
 
                 // Добавляем результаты в контейнер
-                resultsContainer.appendChild(firstResultElement);
-                resultsContainer.appendChild(secondResultElement);
-                document.body.appendChild(resultsContainer);
+                container.appendChild(firstResultElement);
+                container.appendChild(secondResultElement);
 
+                // Создаем поле ввода
                 const pathEditor = document.createElement('input');
                 pathEditor.type = 'text';
                 pathEditor.value = commonPath;
                 pathEditor.id = 'pathEditor'; // Добавляем уникальный id
                 pathEditor.name = 'pathEditor'; // Добавляем уникальный name
                 
-                // Стилизация элемента с использованием Object.assign
+                // Стилизация поля ввода
                 Object.assign(pathEditor.style, {
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
                     width: '300px',
                     margin: '10px',
                     background: 'black', // Черный фон
                     color: 'white', // Белый текст
-                    border: 'none', // Убираем рамку (по желанию)
-                    padding: '10px', // Добавляем отступы для удобства
+                    border: 'none', // Убираем рамку
+                    padding: '10px', // Добавляем отступы
                     borderRadius: '10px', // Закругленные края
                     zIndex: '10000'
                 });
@@ -152,8 +148,6 @@ window.chooseData = () => {
                 // Установка курсора в конец строки
                 pathEditor.focus();
                 pathEditor.setSelectionRange(pathEditor.value.length, pathEditor.value.length);
-
-                document.body.appendChild(pathEditor);
 
                 // Добавляем обработчик изменения пути
                 pathEditor.addEventListener('input', () => {
@@ -163,9 +157,14 @@ window.chooseData = () => {
 
                 // Выделяем элементы по пути
                 highlightElements(commonPath);
+
+                // Добавляем поле ввода в контейнер
+                container.appendChild(pathEditor);
+                document.body.appendChild(container);
             }
         } catch (error) {
             console.error('Error in chooseData function:', error);
         }
     });
 };
+
