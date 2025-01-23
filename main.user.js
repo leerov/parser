@@ -103,22 +103,32 @@
             fontSize: '20px'
         });
 
-        actionButton.addEventListener('click', () => {
+        actionButton.addEventListener('click', async () => {
             const currentFunction = Object.values(stepFunctions)[currentStep];
-            const result = currentFunction?.(); // Получаем результат выполнения функции
-
-            saveConfiguration(result);
-
+        
+            if (currentFunction) {
+                try {
+                    // Ждем результат выполнения функции (Promise)
+                    const result = await currentFunction();
+                    saveConfiguration(result); // Сохраняем результат
+                } catch (error) {
+                    console.error("Ошибка выполнения шага:", error);
+                    alert("Произошла ошибка. Проверьте консоль.");
+                    return;
+                }
+            }
+        
             currentStep++;
             if (currentStep < steps.length) {
                 stepBar.remove();
-                createStepBar(currentStep);
+                createStepBar(currentStep); // Инициализируем следующий шаг
             } else {
                 alert('Парсинг завершен!');
                 stepBar.remove();
                 GM_setValue(`${domain}_config`, null);
             }
         });
+        
 
         stepBar.append(stepNumber, stepTitle, actionButton);
         document.body.insertBefore(stepBar, document.body.firstChild);
