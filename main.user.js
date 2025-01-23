@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.2.13
+// @version      0.2.14
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -114,22 +114,24 @@
             if (currentFunction) {
                 try {
                     const result = await currentFunction();
-                    saveConfiguration(result);
+                    if (result !== null) {
+                        saveConfiguration(result);
+                        currentStep++;
+                        if (currentStep < steps.length) {
+                            stepBar.remove();
+                            createStepBar(currentStep);
+                        } else {
+                            alert('Парсинг завершен!');
+                            stepBar.remove();
+                            GM_setValue(`${domain}_config`, null);
+                        }
+                    } else {
+                        alert('Результат шага пустой! Попробуйте снова.');
+                    }
                 } catch (error) {
                     console.error("Ошибка выполнения шага:", error);
                     alert("Произошла ошибка. Проверьте консоль.");
-                    return;
                 }
-            }
-
-            currentStep++;
-            if (currentStep < steps.length) {
-                stepBar.remove();
-                createStepBar(currentStep);
-            } else {
-                alert('Парсинг завершен!');
-                stepBar.remove();
-                GM_setValue(`${domain}_config`, null);
             }
         });
 
@@ -143,14 +145,15 @@
         stepBar.addEventListener('mouseleave', () => {
             stepBar.style.top = '-40px';
         });
+
         function addExcludeClassRecursively(element) {
             element.classList.add('exclude-from-selection');
             element.querySelectorAll('*').forEach(addExcludeClassRecursively);
         }
 
         addExcludeClassRecursively(stepBar);
-
     };
+
     createStepBar(currentStep);
 
 })();
