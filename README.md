@@ -2,7 +2,7 @@
 [Установить скрипт](https://raw.githubusercontent.com/leerov/parser/refs/heads/main/main.user.js)
 ## Установить необходимые зависимости
 ```bash
-npm install express cors cookie-parser
+npm install express cors cookie-parser lodash winston
 ```
 ### Запустить сервер
 ```bash
