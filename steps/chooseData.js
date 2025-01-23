@@ -1,3 +1,20 @@
+function highlightElements(xpath) {
+    // Удаляем предыдущие выделения
+    document.querySelectorAll('*').forEach(element => {
+        element.style.outline = '';
+    });
+
+    // Выполняем XPath-запрос
+    const result = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    
+    // Выделяем элементы по XPath
+    for (let i = 0; i < result.snapshotLength; i++) {
+        const element = result.snapshotItem(i);
+        element.style.outline = '1px solid red';
+    }
+}
+
+
 const getCommonPath = (path1, path2) => {
     const paths = [path1, path2].map(result => result.split('/').slice(1));
     const commonPath = paths.reduce((acc, path) => {
@@ -38,20 +55,6 @@ window.chooseData = () => {
 
             // Выделяем элементы по пути
             highlightElements(commonPath);
-
-            // Функция для выделения элементов по пути
-            function highlightElements(path) {
-                // Удаляем предыдущие выделения
-                document.querySelectorAll('*').forEach(element => {
-                    element.style.outline = '';
-                });
-
-                // Выделяем элементы по пути
-                const elements = document.querySelectorAll(path);
-                elements.forEach(element => {
-                    element.style.outline = '1px solid red';
-                });
-            }
         }
     });
 };
