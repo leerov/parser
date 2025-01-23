@@ -1,9 +1,9 @@
 window.selectFirstElement = () => {
     return new Promise((resolve) => {
-        console.log("Выбор первого элемента...");
+        console.log("Ожидание выбора элемента...");
 
         let selectedElement = null;
-        let modalOpen = false;
+        let isSelecting = false;
 
         const highlightElement = (element) => {
             if (element) {
@@ -20,19 +20,19 @@ window.selectFirstElement = () => {
         };
 
         const handleMouseOver = (event) => {
-            if (!modalOpen && event.target !== selectedElement) {
+            if (isSelecting && event.target !== selectedElement) {
                 highlightElement(event.target);
             }
         };
 
         const handleMouseOut = (event) => {
-            if (!modalOpen && event.target !== selectedElement) {
+            if (isSelecting && event.target !== selectedElement) {
                 removeHighlight(event.target);
             }
         };
 
         const handleClick = (event) => {
-            if (modalOpen) return;
+            if (!isSelecting) return;
 
             event.preventDefault();
             event.stopPropagation();
@@ -46,14 +46,13 @@ window.selectFirstElement = () => {
 
             console.log("Выбран элемент:", selectedElement);
 
-            // Показываем модальное окно только после выбора элемента
+            // Останавливаем выбор и показываем модальное окно
+            isSelecting = false;
             showConfirmationModal();
         };
 
         const showConfirmationModal = () => {
             if (!selectedElement) return;
-
-            modalOpen = true;
 
             const modal = document.createElement('div');
             Object.assign(modal.style, {
@@ -108,19 +107,13 @@ window.selectFirstElement = () => {
             confirmButton.addEventListener('click', () => {
                 console.log("Подтверждён элемент:", selectedElement);
 
-                // Убираем обработчики событий
                 document.removeEventListener("mouseover", handleMouseOver);
                 document.removeEventListener("mouseout", handleMouseOut);
                 document.removeEventListener("click", handleClick);
 
-                // Удаляем модальное окно
                 modal.remove();
-                modalOpen = false;
 
-                // Сохраняем XPath элемента
                 const elementXPath = generateXPath(selectedElement);
-
-                // Возвращаем XPath через Promise
                 resolve(elementXPath);
             });
 
@@ -130,7 +123,6 @@ window.selectFirstElement = () => {
                 selectedElement = null;
 
                 modal.remove();
-                modalOpen = false;
             });
 
             modalContent.append(message, confirmButton, cancelButton);
@@ -159,8 +151,17 @@ window.selectFirstElement = () => {
             return `/${parts.join('/')}`;
         };
 
-        document.addEventListener("mouseover", handleMouseOver);
-        document.addEventListener("mouseout", handleMouseOut);
-        document.addEventListener("click", handleClick);
+        // Запускаем выбор элемента по кнопке
+        const startSelecting = () => {
+            console.log("Режим выбора элемента активирован.");
+            isSelecting = true;
+
+            document.addEventListener("mouseover", handleMouseOver);
+            document.addEventListener("mouseout", handleMouseOut);
+            document.addEventListener("click", handleClick);
+        };
+
+        // Для активации выбора элемента вызовите `startSelecting()`
+        startSelecting();
     });
 };
