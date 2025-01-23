@@ -6,14 +6,14 @@ window.selectElement = () => {
         let isSelecting = false;
 
         const highlightElement = (element) => {
-            if (element) {
+            if (!element.classList.contains('exclude-from-selection')) {
                 element.style.outline = "2px solid red";
                 element.style.backgroundColor = "rgba(255, 0, 0, 0.2)";
             }
         };
 
         const removeHighlight = (element) => {
-            if (element) {
+            if (!element.classList.contains('exclude-from-selection')) {
                 element.style.outline = "";
                 element.style.backgroundColor = "";
             }
