@@ -3,6 +3,7 @@ window.selectFirstElement = () => {
         console.log("Выбор первого элемента...");
 
         let selectedElement = null;
+        let modalOpen = false;
 
         const highlightElement = (element) => {
             if (element) {
@@ -19,18 +20,20 @@ window.selectFirstElement = () => {
         };
 
         const handleMouseOver = (event) => {
-            if (event.target !== selectedElement) {
+            if (!modalOpen && event.target !== selectedElement) {
                 highlightElement(event.target);
             }
         };
 
         const handleMouseOut = (event) => {
-            if (event.target !== selectedElement) {
+            if (!modalOpen && event.target !== selectedElement) {
                 removeHighlight(event.target);
             }
         };
 
         const handleClick = (event) => {
+            if (modalOpen) return;
+
             event.preventDefault();
             event.stopPropagation();
 
@@ -49,6 +52,8 @@ window.selectFirstElement = () => {
 
         const showConfirmationModal = () => {
             if (!selectedElement) return;
+
+            modalOpen = true;
 
             const modal = document.createElement('div');
             Object.assign(modal.style, {
@@ -110,6 +115,7 @@ window.selectFirstElement = () => {
 
                 // Удаляем модальное окно
                 modal.remove();
+                modalOpen = false;
 
                 // Сохраняем XPath элемента
                 const elementXPath = generateXPath(selectedElement);
@@ -124,6 +130,7 @@ window.selectFirstElement = () => {
                 selectedElement = null;
 
                 modal.remove();
+                modalOpen = false;
             });
 
             modalContent.append(message, confirmButton, cancelButton);

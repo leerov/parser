@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.2.7
+// @version      0.2.8
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -93,7 +93,7 @@
         stepTitle.textContent = steps[stepIndex];
     
         const actionButton = document.createElement('button');
-        actionButton.innerHTML = '&#9658;';
+        actionButton.innerHTML = '▶';
         Object.assign(actionButton.style, {
             width: '40px', // Ширина кнопки
             height: '40px', // Высота кнопки
