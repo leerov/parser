@@ -7,7 +7,7 @@ function highlightElements(xpath) {
 
         // Выполняем XPath-запрос
         const result = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        
+
         // Проверяем, есть ли результаты
         if (result.snapshotLength === 0) {
             console.warn(`No elements found for XPath: ${xpath}`);
@@ -112,13 +112,22 @@ window.chooseData = () => {
                 pathEditor.style.margin = '10px';
                 pathEditor.id = 'pathEditor'; // Добавляем уникальный id
                 pathEditor.name = 'pathEditor'; // Добавляем уникальный name
-                
-                // Стилизация элемента
-                pathEditor.style.background = 'rgba(128, 128, 128, 0.5)'; // Полупрозрачный серый фон
-                pathEditor.style.borderRadius = '10px'; // Закругленные края
-                pathEditor.style.color = 'black'; // Черный текст
-                pathEditor.style.border = 'none'; // Убираем рамку (по желанию)
-                pathEditor.style.padding = '10px'; // Добавляем отступы для удобства
+
+                // Стилизация элемента с использованием Object.assign
+                Object.assign(pathEditor.style, {
+                    position:'absolute',
+                    top: '50vh',
+                    left: '50vw',
+                    width: '300px',
+                    margin: '10px',
+                    background: 'rgba(128, 128, 128, 0.5)', // Полупрозрачный серый фон
+                    borderRadius: '10px', // Закругленные края
+                    color: 'black', // Черный текст
+                    border: 'none', // Убираем рамку (по желанию)
+                    padding: '10px', // Добавляем отступы для удобства
+                    zIndex: '10000'
+                });
+
                 document.body.appendChild(pathEditor);
 
                 // Добавляем обработчик изменения пути
