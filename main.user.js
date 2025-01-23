@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.2.14
+// @version      0.2.15
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -14,8 +14,7 @@
 // @homepageURL  https://github.com/leerov/parser
 // @updateURL    https://raw.githubusercontent.com/leerov/parser/main/main.user.js
 // @downloadURL  https://raw.githubusercontent.com/leerov/parser/main/main.user.js
-// @require      https://raw.githubusercontent.com/leerov/parser/main/steps/1_selectFirstElement.js
-// @require      https://raw.githubusercontent.com/leerov/parser/main/steps/2_selectSecondElement.js
+// @require      https://raw.githubusercontent.com/leerov/parser/main/steps/selectElement.js
 // @require      https://raw.githubusercontent.com/leerov/parser/main/steps/3_selectInfoToSave.js
 // @require      https://raw.githubusercontent.com/leerov/parser/main/steps/4_selectNextElementButton.js
 // @require      https://raw.githubusercontent.com/leerov/parser/main/steps/5_checkSiteAvailability.js
@@ -37,33 +36,25 @@
     ];
 
     const domain = window.location.hostname;
-    const savedConfig = GM_getValue(`${domain}_config`, null);
-    let currentStep = savedConfig?.currentStep || 0;
-
-    const stepFunctions = {
-        selectFirstElement: window.selectFirstElement,
-        selectSecondElement: window.selectSecondElement,
-        selectInfoToSave: window.selectInfoToSave,
-        selectNextElementButton: window.selectNextElementButton,
-        checkSiteAvailability: window.checkSiteAvailability,
-        checkConfiguration: window.checkConfiguration,
-        startParsing: window.startParsing
-    };
-
-    const saveConfiguration = (result) => {
-        const stepsData = savedConfig?.steps || steps.map((step, index) => ({
+    const savedConfig = GM_getValue(`${domain}_config`, {
+        domain,
+        currentStep: 0,
+        steps: steps.map((step, index) => ({
             stepIndex: index,
             info: step,
             result: null
-        }));
+        }))
+    });
 
-        // Сохраняем результат текущего шага
-        stepsData[currentStep].result = result;
+    let currentStep = savedConfig.currentStep;
+
+    const saveConfiguration = (result) => {
+        const config = GM_getValue(`${domain}_config`);
+        config.steps[currentStep].result = result;
 
         GM_setValue(`${domain}_config`, {
-            domain,
-            currentStep,
-            steps: stepsData
+            ...config,
+            currentStep
         });
     };
 
@@ -109,11 +100,10 @@
         });
 
         actionButton.addEventListener('click', async () => {
-            const currentFunction = Object.values(stepFunctions)[currentStep];
-
-            if (currentFunction) {
+            const stepFunction = window[`step${currentStep}`];
+            if (stepFunction) {
                 try {
-                    const result = await currentFunction();
+                    const result = await stepFunction();
                     if (result !== null) {
                         saveConfiguration(result);
                         currentStep++;
@@ -121,7 +111,7 @@
                             stepBar.remove();
                             createStepBar(currentStep);
                         } else {
-                            alert('Парсинг завершен!');
+                            alert('Парсинг завершён!');
                             stepBar.remove();
                             GM_setValue(`${domain}_config`, null);
                         }
@@ -129,8 +119,8 @@
                         alert('Результат шага пустой! Попробуйте снова.');
                     }
                 } catch (error) {
-                    console.error("Ошибка выполнения шага:", error);
-                    alert("Произошла ошибка. Проверьте консоль.");
+                    console.error('Ошибка выполнения шага:', error);
+                    alert('Произошла ошибка. Проверьте консоль.');
                 }
             }
         });
@@ -145,15 +135,10 @@
         stepBar.addEventListener('mouseleave', () => {
             stepBar.style.top = '-40px';
         });
-
-        function addExcludeClassRecursively(element) {
-            element.classList.add('exclude-from-selection');
-            element.querySelectorAll('*').forEach(addExcludeClassRecursively);
-        }
-
-        addExcludeClassRecursively(stepBar);
     };
 
-    createStepBar(currentStep);
+    window.step0 = () => selectElement("Выбрать первый элемент");
+    window.step1 = () => selectElement("Выбрать второй элемент");
 
+    createStepBar(currentStep);
 })();
