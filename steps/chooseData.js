@@ -11,12 +11,14 @@ function highlightElements(xpath) {
         // Проверяем, есть ли результаты
         if (result.snapshotLength === 0) {
             console.warn(`No elements found for XPath: ${xpath}`);
+            showAlert(`Элементы не найдены для XPath: ${xpath}`);
+            return;
         }
 
         // Выделяем элементы по XPath
         for (let i = 0; i < result.snapshotLength; i++) {
             const element = result.snapshotItem(i);
-            element.style.outline = '1px solid red';
+            element.style.outline = '2px solid red'; // Увеличиваем толщину рамки для лучшей видимости
         }
     } catch (error) {
         console.error(`Error highlighting elements for XPath "${xpath}":`, error);
@@ -40,6 +42,54 @@ const getCommonPath = (path1, path2) => {
     }
 };
 
+const showAlert = (message) => {
+    const modal = document.createElement('div');
+    Object.assign(modal.style, {
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: '10000'
+    });
+
+    const modalContent = document.createElement('div');
+    Object.assign(modalContent.style, {
+        backgroundColor: '#fff',
+        padding: '20px',
+        borderRadius: '10px',
+        textAlign: 'center',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'
+    });
+
+    const messageElement = document.createElement('p');
+    messageElement.textContent = message;
+
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Закрыть';
+    Object.assign(closeButton.style, {
+        margin: '10px',
+        padding: '10px 20px',
+        backgroundColor: 'blue',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer'
+    });
+
+    closeButton.addEventListener('click', () => {
+        modal.remove();
+    });
+
+    modalContent.append(messageElement, closeButton);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+};
+
 window.chooseData = () => {
     return new Promise((resolve) => {
         try {
@@ -59,6 +109,8 @@ window.chooseData = () => {
                 const pathEditor = document.createElement('input');
                 pathEditor.type = 'text';
                 pathEditor.value = commonPath;
+                pathEditor.style.width = '300px';
+                pathEditor.style.margin = '10px';
                 document.body.appendChild(pathEditor);
 
                 // Добавляем обработчик изменения пути
