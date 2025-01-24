@@ -69,6 +69,7 @@ const showAlert = (message) => {
 
     const closeButton = document.createElement('button');
     closeButton.textContent = 'Закрыть';
+    
     Object.assign(closeButton.style, {
         margin: '10px',
         padding: '10px 20px',
@@ -78,11 +79,7 @@ const showAlert = (message) => {
         borderRadius: '5px',
         cursor: 'pointer'
     });
-
-    closeButton.addEventListener('click', () => {
-        modal.remove();
-    });
-
+    
     modalContent.append(messageElement, closeButton);
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
@@ -166,9 +163,10 @@ window.chooseData = () => {
                         while (container.firstChild) {
                             container.removeChild(container.firstChild);
                         }
+                        container.remove(); // Удаляем контейнер
                     }
                 });
-
+                
                 highlightElements(commonPath);
 
                 container.appendChild(pathEditor);
