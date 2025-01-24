@@ -34,7 +34,6 @@ window.selectElement = () => {
         const handleClick = (event) => {
             if (!isSelecting) return;
 
-            // Игнорируем саму кнопку запуска
             if (event.target.classList.contains("exclude-from-selection")) {
                 console.log("Нажата кнопка запуска. Игнорируется.");
                 return;
@@ -52,7 +51,6 @@ window.selectElement = () => {
 
             console.log("Выбран элемент:", selectedElement);
 
-            // Останавливаем выбор и показываем модальное окно
             isSelecting = false;
             showConfirmationModal();
         };
@@ -85,9 +83,6 @@ window.selectElement = () => {
                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'
             });
 
-            const message = document.createElement('p');
-            message.textContent = 'Подтвердить выбор этого элемента?';
-
             const confirmButton = document.createElement('button');
             confirmButton.textContent = 'Подтвердить';
             Object.assign(confirmButton.style, {
@@ -114,7 +109,6 @@ window.selectElement = () => {
 
             confirmButton.addEventListener('click', () => {
                 console.log("Подтверждён элемент:", selectedElement);
-
                 document.removeEventListener("mouseover", handleMouseOver);
                 document.removeEventListener("mouseout", handleMouseOut);
                 document.removeEventListener("click", handleClick);
@@ -159,7 +153,6 @@ window.selectElement = () => {
             return `/${parts.join('/')}`;
         };
 
-        // Запускаем выбор элемента по кнопке
         const startSelecting = () => {
             console.log("Режим выбора элемента активирован.");
             isSelecting = true;
@@ -169,7 +162,6 @@ window.selectElement = () => {
             document.addEventListener("click", handleClick);
         };
 
-        // Для активации выбора элемента, запускаем `startSelecting()`
         startSelecting();
     });
 };

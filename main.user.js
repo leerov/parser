@@ -45,7 +45,7 @@
     });
 
     let currentStep = savedConfig.currentStep;
-
+    
     const saveConfiguration = (result) => {
         let config = GM_getValue(`${domain}_config`, {
             domain,
