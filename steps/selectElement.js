@@ -127,7 +127,7 @@ window.selectElement = () => {
                 modal.remove();
             });
 
-            modalContent.append(message, confirmButton, cancelButton);
+            modalContent.append(confirmButton, cancelButton);
             modal.appendChild(modalContent);
             document.body.appendChild(modal);
         };

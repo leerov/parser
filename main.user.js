@@ -2,7 +2,7 @@
 // @name         Parser by Leerov
 // @icon         https://raw.githubusercontent.com/leerov/parser/main/icon.svg
 // @namespace    http://tampermonkey.net/
-// @version      0.3.14
+// @version      0.3.15
 // @description  Modularized universal scraper with external step files
 // @author       Leerov
 // @match        *://*/*
@@ -45,7 +45,7 @@
     });
 
     let currentStep = savedConfig.currentStep;
-    
+
     const saveConfiguration = (result) => {
         let config = GM_getValue(`${domain}_config`, {
             domain,
