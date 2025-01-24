@@ -46,9 +46,7 @@
 
     let currentStep = savedConfig.currentStep;
 
-    // Функция сохранения конфигурации
     const saveConfiguration = (result) => {
-        // Получаем конфигурацию с дефолтными значениями, если она не существует
         let config = GM_getValue(`${domain}_config`, {
             domain,
             currentStep: 0,
@@ -59,17 +57,14 @@
             }))
         });
     
-        // Проверяем, что steps существует и является массивом
         if (!config.steps || !Array.isArray(config.steps)) {
             console.error('Ошибка: свойство steps не определено или не является массивом');
             return;
         }
     
-        // Если currentStep в пределах допустимого диапазона
         if (currentStep >= 0 && currentStep < config.steps.length) {
             config.steps[currentStep].result = result;
     
-            // Сохраняем обновленную конфигурацию
             GM_setValue(`${domain}_config`, {
                 ...config,
                 currentStep
@@ -80,7 +75,6 @@
     };
     
 
-    // Функция для создания панели с текущим шагом
     const createStepBar = (stepIndex) => {
         const stepBar = document.createElement('div');
         Object.assign(stepBar.style, {
@@ -123,9 +117,8 @@
         });
 
         actionButton.addEventListener('click', async () => {
-            const stepFunction = window[`step${currentStep}`]; // Получаем функцию для текущего шага
+            const stepFunction = window[`step${currentStep}`];
 
-            // Проверка, что функция существует
             if (typeof stepFunction === 'function') {
                 try {
                     const result = await stepFunction();

@@ -36,7 +36,7 @@ const getCommonPath = (path1, path2) => {
         return '/' + commonPath.join('/');
     } catch (error) {
         console.error('Error getting common path:', error);
-        return ''; // Возвращаем пустую строку в случае ошибки
+        return '';
     }
 };
 
@@ -88,15 +88,14 @@ const showAlert = (message) => {
     document.body.appendChild(modal);
 };
 
-let container; // Переменная для хранения контейнера
+let container;
 
 window.chooseData = () => {
     return new Promise((resolve) => {
         try {
-            // Проверяем, существует ли контейнер
             if (container) {
                 console.warn('Контейнер уже существует. Невозможно создать новый.');
-                return; // Выходим из функции, если контейнер уже существует
+                return;
             }
 
             const domain = window.location.hostname;
@@ -111,8 +110,7 @@ window.chooseData = () => {
                 const secondResult = config.steps[1]?.result;
                 const commonPath = getCommonPath(firstResult, secondResult);
 
-                // Создаем общий контейнер для результатов и поля ввода
-                container = document.createElement('div'); // Присваиваем контейнер переменной
+                container = document.createElement('div');
                 Object.assign(container.style, {
                     position: 'fixed',
                     top: '40%',
@@ -120,69 +118,59 @@ window.chooseData = () => {
                     transform: 'translate(-50%, -50%)',
                     zIndex: '10000',
                     textAlign: 'center',
-                    backgroundColor: 'rgba(50, 50, 50, 0.8)', // Темный прозрачный серый фон
-                    padding: '20px', // Отступы
-                    borderRadius: '10px', // Закругленные края
+                    backgroundColor: 'rgba(50, 50, 50, 0.8)',
+                    padding: '20px',
+                    borderRadius: '10px',
                 });
 
-                // Создаем элементы для первого и второго результата
                 const firstResultElement = document.createElement('p');
                 firstResultElement.textContent = `Первый результат: ${firstResult || 'Нет данных'}`;
-                firstResultElement.style.color = 'white'; // Белый текст
+                firstResultElement.style.color = 'white';
 
                 const secondResultElement = document.createElement('p');
                 secondResultElement.textContent = `Второй результат: ${secondResult || 'Нет данных'}`;
-                secondResultElement.style.color = 'white'; // Белый текст
+                secondResultElement.style.color = 'white';
 
-                // Добавляем результаты в контейнер
                 container.appendChild(firstResultElement);
                 container.appendChild(secondResultElement);
 
-                // Создаем поле ввода
                 const pathEditor = document.createElement('input');
                 pathEditor.type = 'text';
                 pathEditor.value = commonPath;
-                pathEditor.id = 'pathEditor'; // Добавляем уникальный id
-                pathEditor.name = 'pathEditor'; // Добавляем уникальный name
+                pathEditor.id = 'pathEditor';
+                pathEditor.name = 'pathEditor';
 
-                // Стилизация поля ввода
                 Object.assign(pathEditor.style, {
                     width: '80%',
                     margin: '10px',
-                    background: 'black', // Черный фон
-                    color: 'white', // Белый текст
-                    border: 'none', // Убираем рамку
-                    padding: '10px', // Добавляем отступы
-                    borderRadius: '10px', // Закругленные края
+                    background: 'black',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px',
+                    borderRadius: '10px',
                     zIndex: '10000'
                 });
 
-                // Установка курсора в конец строки
                 pathEditor.focus();
                 pathEditor.setSelectionRange(pathEditor.value.length, pathEditor.value.length);
 
-                // Добавляем обработчик изменения пути
                 pathEditor.addEventListener('input', () => {
                     const newPath = pathEditor.value;
                     highlightElements(newPath);
                 });
 
-                // Добавляем обработчик нажатия клавиши
                 pathEditor.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         const inputValue = pathEditor.value;
-                        console.log('Содержимое input:', inputValue); // Возвращаем содержимое input
-                        // Удаляем все дочерние элементы контейнера
+                        console.log('Содержимое input:', inputValue);
                         while (container.firstChild) {
                             container.removeChild(container.firstChild);
                         }
                     }
                 });
 
-                // Выделяем элементы по пути
                 highlightElements(commonPath);
 
-                // Добавляем поле ввода в контейнер
                 container.appendChild(pathEditor);
                 document.body.appendChild(container);
                 addExcludeClassRecursively(container);
